@@ -1,0 +1,830 @@
+//#include<bits/stdc++.h>
+//#include <GL/glut.h>
+#include<stdlib.h>
+#include<GL/glut.h>
+#include<stdio.h>
+#include<math.h>
+#include<time.h>
+#include<string.h>
+#include<iostream>
+#include <chrono>
+#include <thread>
+using namespace std;
+int prime, generator, flag = 0;
+char p[10], g[10];
+long int a, b, c;
+char pal[10], pbb[10], pcl[10];
+long int pa, pb, pc;
+char al[10], bb[10];
+char sha[10], sha1[10], sha2[10];
+void output(int x, int y, char const*string)
+{
+
+	int len, i;
+	glRasterPos2f(x, y);
+	len = (int)strlen(string);
+	for (i = 0; i < len; i++)
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[i]);
+	glFlush();
+}
+
+void delay(int x = 1) {
+	std::this_thread::sleep_for(std::chrono::milliseconds(x * 3));
+}
+int modInverse(int d, long int prime)
+{
+	d=-d;
+	for (int x = 1; x < prime; x++)
+	{
+		if ((d*x) % prime == 1)
+		{
+			return x;
+		}
+	}
+
+}
+int modInverse1(int e, long int prime)
+{
+	e = -e;
+	for (int x = 1; x < prime; x++)
+	{
+		if ((e*x) % prime == 1)
+		{
+			return x;
+		}
+	}
+
+}
+
+// x, y = lower left corner
+void clearArea(int x, int y, int width, int height, int deb = 0) {
+	float scale = 10.0 / 7;
+	// glScissor(x * scale, y * scale, width * scale, height * scale);
+	glScissor(x * scale, y, width * scale, height);
+	glEnable(GL_SCISSOR_TEST);
+	if (deb)
+		glClearColor(1, 1, 1, 1);
+	else
+		glClearColor(0.1, 0.45, 0.7, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glDisable(GL_SCISSOR_TEST);
+	glFlush();
+}
+void clearArea1(int x, int y, int width, int height) {
+	int scale = 3;
+	glScissor(x * scale, y * scale, width * scale, height * scale);
+	glEnable(GL_SCISSOR_TEST);
+	glClearColor(1, 1, 1, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glDisable(GL_SCISSOR_TEST);
+	glFlush();
+}
+void clearArea2(int x, int y, int width, int height, int deb = 0) {
+	float scale = 10.0 / 7;
+	// glScissor(x * scale, y * scale, width * scale, height * scale);
+	glScissor(x * scale, y, width * scale, height);
+	glEnable(GL_SCISSOR_TEST);
+	if (deb)
+		glClearColor(1, 1, 1, 1);
+	else
+		glClearColor(0.1, 0.45, 0.7, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glDisable(GL_SCISSOR_TEST);
+	glFlush();
+}
+void clearArea3(int x, int y, int width, int height, int deb = 0) {
+	float scale = 10.0 / 7;
+	// glScissor(x * scale, y * scale, width * scale, height * scale);
+	glScissor(x * scale, y, width * scale, height);
+	glEnable(GL_SCISSOR_TEST);
+	if (deb)
+		glClearColor(1, 1, 1, 1);
+	else
+		glClearColor(0.1, 0.45, 0.7, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glDisable(GL_SCISSOR_TEST);
+	glFlush();
+}
+void clearArea4(int x, int y, int width, int height, int deb = 0) {
+	float scale = 10.0 / 7;
+	// glScissor(x * scale, y * scale, width * scale, height * scale);
+	glScissor(x * scale, y, width * scale, height);
+	glEnable(GL_SCISSOR_TEST);
+	if (deb)
+		glClearColor(1, 1, 1, 1);
+	else
+		glClearColor(0.1, 0.45, 0.7, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glDisable(GL_SCISSOR_TEST);
+	glFlush();
+}
+void tostring(char str[], long int num)
+{
+	int i, rem, len = 0, n;
+	n = num;
+	while (n != 0)
+	{
+		len++;
+		n /= 10;
+	}
+	for (i = 0; i < len; i++)
+	{
+		rem = num % 10;
+		num = num / 10;
+		str[len - (i + 1)] = rem + '0';
+	}
+	str[len] = '\0';
+}
+int isPrime(int n)
+{
+	int i, c = 0;
+	for (i = 1; i < n; i++)
+	{
+		if (n%i == 0)
+			c++;
+	}
+	if (c == 1)
+		return 1;
+	else
+		return 0;
+}
+
+void sk()
+{
+	double yinc = 120.0 / 450.0;
+	double y = 350;
+	for (int x = 70; x <= 520; x += 1, y -= yinc) {
+		output(x, round(y), "g^a (mod) p = A");
+		output(x + 30, round(y) - 45, pal);
+		delay(1);
+		if (x != 520)
+			clearArea(x - 4, y - 54, 150 + 4, 80 + 4);
+	}
+	y = 350;
+	for (int x = 520; x >= 70; x -= 1, y -= yinc) {
+		output(x, round(y), "g^b (mod) p = B");
+		output(x + 30, round(y) - 45, pbb);
+		delay(1);
+		if (x != 70)
+			clearArea(x - 4, y - 54, 150 + 4, 80 + 4);
+	}
+}
+int power1(int x, unsigned int y, int p)
+{
+	int res = 1;      // Initialize result 
+
+	x = x % p;  // Update x if it is more than or  
+				// equal to p 
+
+	while (y > 0)
+	{
+		// If y is odd, multiply x with result 
+		if (y & 1)
+			res = (res*x) % p;
+
+		// y must be even now 
+		y = y >> 1; // y = y/2 
+		x = (x*x) % p;
+	}
+	return res;
+}
+
+void alice()
+{
+	pa = power1(generator, a, prime);
+	if (pa < 0)
+	{
+		pa = modInverse(pa, prime);
+	}
+	printf("public key of alice:%ld\n", pa);
+	tostring(pal, pa);
+
+	for (int x = 0; x < 70; x += 1) {
+		output(x, 350, "g^a (mod) p = A");
+		delay(2);
+		if (x != 69)
+			clearArea(x, 325, 150, 50);
+	}
+	output(100, 305, pal);
+}
+void bob()
+{
+	pb = power1(generator, b, prime);
+	if (pb < 0)
+	{
+		pb = modInverse1(pb, prime);
+	}
+	printf("public key of bob:%ld\n", pb);
+	tostring(pbb, pb);
+	for (int x = 600; x >= 520; x -= 1) {
+		output(x, 350, "g^b (mod) p = B");
+		delay(2);
+		if (x != 520)
+			clearArea(x, 325, 150, 50);
+	}
+	output(550, 305, pbb);
+	//swapKey();
+}
+void alice1()
+{
+	pa = power1(generator, a, prime);
+	if (pa < 0)
+	{
+		pa = modInverse(pa, prime);
+	}
+	printf("public key of alice:%ld\n", pa);
+	tostring(pal, pa);
+
+	for (int x = 101; x < 200; x += 1) {
+		output(x, 450, "g^a (mod) p = A");
+		delay(2);
+		if (x != 199)
+			clearArea2(x, 425, 150, 50);
+	}
+
+	output(100, 405, pal);
+
+}
+void middle1()
+{
+	c = 3;
+	pc = (((long int)pow(generator, c)) % prime);
+	printf("public key of middle:%ld\n", pc);
+	tostring(pcl, pc);
+
+	for (int x = 350; x < 450; x += 1) {
+		output(x, 450, "g^c (mod) p = C");
+		delay(2);
+		if (x != 449)
+			clearArea3(x, 425, 150, 50);
+	}
+	output(350, 405, pcl);
+}
+void middle2()
+{
+	c = 3;
+	pc = (((long int)pow(generator, c)) % prime);
+	printf("public key of middle:%ld\n", pc);
+	tostring(pcl, pc);
+
+	for (int x = 200; x >= 100; x -= 1) {
+		output(x, 353, "g^c (mod) p = C");
+		delay(2);
+		if (x != 100)
+			clearArea3(x, 328, 150, 50);
+	}
+	output(100, 305, pcl);
+}
+void bob1()
+{
+	pb = power1(generator, b, prime);
+	if (pb < 0)
+	{
+		pb = modInverse(pb, prime);
+	}
+	printf("public key of bob:%ld\n", pb);
+	tostring(pbb, pb);
+	for (int x = 450; x >= 350; x -= 1) {
+		output(x, 353, "g^b (mod) p = B");
+		delay(2);
+		if (x != 350)
+			clearArea4(x, 328, 150, 50);
+	}
+	output(350, 305, pbb);
+	//swapKey();
+}
+
+
+
+long long powM(long long base, long long exp, long long mod) {
+	long long res = 1;
+	for (int i = 0; i < exp; i++) {
+		res = (res * base) % mod;
+	}
+	return res;
+}
+
+void shared() {
+	long long sh = powM(generator, a * b, prime);
+	cout << "shared secret:" << sh << endl;
+	glColor3ub(255, 192, 203);
+	output(75, 100, "g^(a*b) (mod) p");
+	tostring(sha, sh);
+	cout << sha << endl;
+	output(110, 75, sha);
+	glColor3ub(255, 192, 203);
+	output(520, 100, "g^(a*b) (mod) p");
+	output(560, 75, sha);
+
+	for (int y = 250; y < 300; y += 1) {
+		output(250, y, "CONNECTION ESTABLISHED!!");
+		delay(2);
+		if (y != 299)
+			clearArea(250, y - 10, 245, 50);
+	}
+	glColor3ub(240, 128, 128);
+	for (int i = 200; i < 500; i++) {
+		glBegin(GL_POLYGON);
+		glVertex2i(i, 550);
+		glVertex2i(i + 1, 550);
+		glVertex2i(i + 1, 560);
+		glVertex2i(i, 560);
+		glEnd();
+		glFlush();
+		delay(1);
+	}
+}
+void output2(int x, int y, char const*string)
+{
+	int len, i;
+	glRasterPos2f(x, y);
+	len = (int)strlen(string);
+	for (i = 0; i < len; i++)
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, string[i]);
+	glFlush();
+}
+void prac()
+{
+	cout << "prac" << endl;
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0, 1, 1);
+	output2(250, 600, "DIFFIE HELMANN KEY EXCHANGE");
+	output2(250, 550, "published in 1976 by Diffie  and Hellman");
+	output2(90, 500, "based on discrete logarithm and is one of the earliest cryptographic algorithm for key exchange");
+	output2(90, 400, "INSTRUCTIONS TO SEE WORKING:");
+	output2(90, 300, "press J/j to view algorithm");
+	output2(90, 280, "press O/o to move the secret key of from bob to alice");
+	output2(90, 260, "press M/m to move the secret key of from alice to bob");
+	output2(90, 240, "press K/k to view shared key");
+	output2(90, 220, "press H/h to view the middle man attack");
+	output2(90, 200, "press right button of mouse to get menu options");
+	glFlush();
+}
+void computer()
+{
+	glColor3f(0.75, 0.85, 0.65);//keyboard
+	glBegin(GL_QUADS);
+	glVertex2f(55.0, 525.0);
+	glVertex2f(145.0, 525.0);
+	glVertex2f(150.0, 535.0);
+	glVertex2f(60.0, 535.0);
+	glEnd();
+	glColor3f(0.75, 0.85, 0.65);//keyboard
+
+	glColor3f(0.75, 0.85, 0.65);//cabinet
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(60.0, 540.0);
+	glVertex2f(150.0, 540.0);
+	glVertex2f(150.0, 555.0);
+	glVertex2f(60.0, 555.0);
+	glEnd();
+
+	glColor3f(0.75, 0.85, 0.65);//cpu
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(75.0, 565.0);
+	glVertex2f(135, 565.0);
+	glVertex2f(135.0, 615.0);
+	glVertex2f(75.0, 615.0);
+	glEnd();
+
+	glColor3f(0.7, 0.8, 0.6);//monitor
+	glBegin(GL_QUADS);
+	glVertex2f(80.0, 570.0);
+	glVertex2f(130.0, 570.0);
+	glVertex2f(130.0, 610.0);
+	glVertex2f(80.0, 610.0);
+	glEnd();
+
+	glColor3f(0.75, 0.85, 0.65);
+	glBegin(GL_LINES);
+	glVertex2f(90.0, 555.0);
+	glVertex2f(90.0, 565.0);
+	glVertex2f(120.0, 555.0);
+	glVertex2f(120.0, 565.0);
+	glEnd();
+}
+void computer_dest()
+{
+	glColor3f(0.75, 0.85, 0.65);//keyboard
+	glBegin(GL_QUADS);
+	glVertex2f(545.0, 525.0);
+	glVertex2f(635.0, 525.0);
+	glVertex2f(640.0, 535.0);
+	glVertex2f(550.0, 535.0);
+	glEnd();
+
+
+	glColor3f(0.75, 0.85, 0.65);//cabinet
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(550.0, 540.0);
+	glVertex2f(640.0, 540.0);
+	glVertex2f(640.0, 555.0);
+	glVertex2f(550.0, 555.0);
+	glEnd();
+
+	glColor3f(0.75, 0.85, 0.65);//cpu
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(565.0, 565.0);
+	glVertex2f(625, 565.0);
+	glVertex2f(625.0, 615.0);
+	glVertex2f(565.0, 615.0);
+	glEnd();
+
+	glColor3f(0.7, 0.8, 0.6);//monitor
+	glBegin(GL_QUADS);
+	glVertex2f(570.0, 570.0);
+	glVertex2f(620.0, 570.0);
+	glVertex2f(620.0, 610.0);
+	glVertex2f(570.0, 610.0);
+	glEnd();
+
+	glColor3f(0.75, 0.85, 0.65);
+	glBegin(GL_LINES);
+	glVertex2f(580.0, 555.0);
+	glVertex2f(580.0, 565.0);
+	glVertex2f(610.0, 555.0);
+	glVertex2f(610.0, 565.0);
+	glEnd();
+}
+
+void keys()
+{
+	cout << "in keys" << endl;
+	tostring(p, prime);
+	tostring(g, generator);
+	glClearColor(0.1, 0.45, 0.7, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3ub(255, 192, 203);
+	output(75, 630, "ALICE");
+	output(565, 630, "BOB");
+	output(295, 610, "PRIME:");
+	output(295, 580, "GENERATOR:");
+	output(360, 610, p);
+	output(410, 580, g);
+	computer();
+	computer_dest();
+	tostring(al, a);
+	tostring(bb, b);
+	glColor3f(220, 200, 60);
+	output(60, 450, "PRIVATE KEY");
+	output(85, 425, al);
+	output(550, 450, "PRIVATE KEY");
+	output(575, 425, bb);
+	// output(695, 300, "public key");
+	glFlush();
+}
+void display()
+{
+	glClearColor(0.0, 0.0, 0.2, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3ub(255, 165, 0.0);
+	output(200, 650, "JSS ACADEMY OF TECHNICAL EDUCATION");
+	output(150, 550, "DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING");
+	output(290, 450, "COMPUTER GRAPHICS");
+	output(180, 400, "MINI PROJECT ON DIFFIE HELLMAN KEY EXCHANGE");
+	output(450, 210, "By:");
+	output(350, 180, "1JS16CS091");
+	output(475, 180, "SARIKYA S.M");
+	output(350, 150, "1JS16CS094");
+	output(475, 150, "SHRADDHA.V.PRASAD");
+	output(100, 210, "Under the guidence of:");
+	output(100, 170, "MAHESH KUMAR");
+	output(80, 030, "Press S/s to Start");
+	output(250, 030, "Press N/n to know more");
+	output(500, 030, "Press Q/q to Quit");
+	glFlush();
+}
+void scan_menu(int id) {
+	if (id == 1) {
+		alice();
+		bob();
+		sk();
+		//grid();
+		//flag = 1;
+		// glutPostRedisplay();
+	}
+	else if (id == 2) {
+		shared();
+	}
+
+	else { exit(0); }
+	// glutPostRedisplay();
+}
+void myinit()
+{
+	cout << "in keys" << endl;
+	tostring(p, prime);
+	tostring(g, generator);
+	glClearColor(0.3, 0.42, 0.9, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(1, 1, 1);
+	output(75, 630, "ALICE");
+	output(565, 630, "BOB");
+	computer();
+	computer_dest();
+	glColor3ub(255, 215, 0);
+	glBegin(GL_LINES);
+	glVertex2i(100, 500);
+	glVertex2i(100, 470);
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex2i(100, 410);
+	glVertex2i(100, 100);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex2i(600, 500);
+	glVertex2i(600, 470);
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex2i(600, 410);
+	glVertex2i(600, 100);
+	glEnd();
+	glColor3ub(1, 1, 1);
+	output(70, 450, "choose a random number");
+	output(70, 420, "'a' as the private key");
+	output(500, 450, "choose a random number");
+	output(520, 420, "'b' as the private key");
+	glFlush();
+
+}
+void move()
+{
+	for (int x = 100; x < 500; x += 1) {
+		glColor3f(1, 1, 1);
+		output(x, 350, "compute g^a(mod)p ");
+		delay(2);
+		if (x != 499)
+
+			clearArea(x, 325, 150, 50);
+	}
+}
+void moveb()
+{
+	for (int x = 450; x >= 50; x -= 1) {
+		glColor3f(1, 1, 1);
+		output(x, 250, "compute g^b(mod)p");
+		delay(2);
+		if (x > 50)
+			clearArea(x, 225, 150, 50);
+	}
+}
+void sharekey()
+{
+	glClearColor(0.4, 0.3, 0.8, 1.0);
+
+	glColor3f(1.0, 0.8, 0.3);
+
+	glBegin(GL_POLYGON);
+	glVertex2i(200, 150);
+	glVertex2i(200, 170);
+	glVertex2i(500, 170);
+	glVertex2i(500, 150);
+	glEnd();
+
+	glBegin(GL_POLYGON);
+	glVertex2i(500, 190);
+	glVertex2i(500, 130);
+	glVertex2i(600, 160);
+	glEnd();
+	glBegin(GL_POLYGON);
+	glVertex2i(200, 190);
+	glVertex2i(200, 130);
+	glVertex2i(100, 160);
+	glEnd();
+	glColor3f(1, 1, 1);
+	output(300, 110, "Shared key g^(ab)mod p");
+	glFlush();
+}
+void sharekey1()
+{
+	glClearColor(0.4, 0.3, 0.8, 1.0);
+
+	glColor3f(0.7, 1.0, 0.4);
+
+	glBegin(GL_POLYGON);
+	glVertex2i(125, 150);
+	glVertex2i(125, 170);
+	glVertex2i(320, 170);
+	glVertex2i(320, 150);
+	glEnd();
+
+	glBegin(GL_POLYGON);
+	glVertex2i(320, 190);
+	glVertex2i(320, 130);
+	glVertex2i(350, 160);
+	glEnd();
+	glBegin(GL_POLYGON);
+	glVertex2i(125, 190);
+	glVertex2i(125, 130);
+	glVertex2i(100, 160);
+	glEnd();
+	glColor3f(1, 1, 1);
+	output(150, 110, "Shared key g^(ac)mod p");
+	glFlush();
+}
+void sharekey2()
+{
+	glClearColor(0.4, 0.3, 0.8, 1.0);
+	glColor3ub(240, 128, 128);
+
+	glBegin(GL_POLYGON);
+	glVertex2i(375, 150);
+	glVertex2i(375, 170);
+	glVertex2i(580, 170);
+	glVertex2i(580, 150);
+	glEnd();
+
+	glBegin(GL_POLYGON);
+	glVertex2i(580, 190);
+	glVertex2i(580, 130);
+	glVertex2i(600, 160);
+	glEnd();
+	glBegin(GL_POLYGON);
+	glVertex2i(375, 190);
+	glVertex2i(375, 130);
+	glVertex2i(350, 160);
+	glEnd();
+	glColor3f(1, 1, 1);
+	output(400, 110, "Shared key g^(bc)mod p");
+	glFlush();
+}
+
+void computer_middle()
+{
+	glColor3f(0.75, 0.85, 0.65);//keyboard
+	glBegin(GL_QUADS);
+	glVertex2f(305.0, 525.0);
+	glVertex2f(395.0, 525.0);
+	glVertex2f(400.0, 535.0);
+	glVertex2f(310.0, 535.0);
+	glEnd();
+
+
+	glColor3f(0.75, 0.85, 0.65);//cabinet
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(310.0, 540.0);
+	glVertex2f(400.0, 540.0);
+	glVertex2f(400.0, 555.0);
+	glVertex2f(310.0, 555.0);
+	glEnd();
+
+	glColor3f(0.75, 0.85, 0.65);//cpu
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(325.0, 565.0);
+	glVertex2f(385.0, 565.0);
+	glVertex2f(385.0, 615.0);
+	glVertex2f(325.0, 615.0);
+	glEnd();
+
+	glColor3f(0.7, 0.8, 0.6);//monitor
+	glBegin(GL_QUADS);
+	glVertex2f(330.0, 570.0);
+	glVertex2f(380.0, 570.0);
+	glVertex2f(380.0, 610.0);
+	glVertex2f(330.0, 610.0);
+	glEnd();
+
+	glColor3f(0.75, 0.85, 0.65);
+	glBegin(GL_LINES);
+	glVertex2f(340.0, 555.0);
+	glVertex2f(340.0, 565.0);
+	glVertex2f(370.0, 555.0);
+	glVertex2f(370.0, 565.0);
+	glEnd();
+}
+
+void func()
+{
+
+	cout << "in keys" << endl;
+	tostring(p, prime);
+	tostring(g, generator);
+	glClearColor(0.4, 0.6, 0.7, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.0, 0.0, 0.0);
+	output(75, 630, "ALICE");
+	output(565, 630, "BOB");
+	output(325, 630, "ETHER");
+	computer();
+	computer_dest();
+	computer_middle();
+	glColor3ub(0, 250, 154);
+	glLineWidth(4);
+	glBegin(GL_LINES);
+	glVertex2i(100, 500);
+	glVertex2i(100, 100);
+	glEnd();
+
+	glLineWidth(4);
+	glBegin(GL_LINES);
+	glVertex2i(600, 500);
+	glVertex2i(600, 100);
+
+	glEnd();
+	glLineWidth(4);
+	glBegin(GL_LINES);
+	glVertex2i(350, 500);
+	glVertex2i(350, 100);
+	glEnd();
+	alice1();
+	delay(500);
+	middle1();
+	delay(500);
+	bob1();
+	delay(500);
+	middle2();
+	sharekey1();
+	sharekey2();
+	long long sh1 = powM(generator, a * c, prime);
+	cout << "shared secret between alice and Ether:" << sh1 << endl;
+
+	tostring(sha1, sh1);
+
+	output(190, 75, sha1);
+	long long sh2 = powM(generator, b * c, prime);
+	cout << "shared secret between Ether and bob: " << sh2;
+
+	tostring(sha2, sh2);
+
+	output(450, 75, sha2);
+	glColor3f(1.0, 1.0, 0.0);
+
+	output(250, 50, "This illustrates the middle man attack");
+	glFlush();
+}
+
+void keyfunc(unsigned char key, int x, int y)
+{
+	switch (key) {
+
+	case 'S':
+	case 's':
+		// glutDisplayFunc(keys);
+		 // glutPostRedisplay();
+		keys();
+		break;
+	case 'n':
+	case 'N': prac();
+		break;
+	case 'm':
+	case 'M':move();
+		break;
+	case 'o':
+	case 'O':moveb();
+		break;
+	case 'j':
+	case 'J':myinit();
+		break;
+	case 'k':
+	case 'K':
+		sharekey();
+		break;
+	case 'h':
+	case 'H':func();
+		break;
+	case 'q':
+	case 'Q':
+		exit(0);
+	}
+}
+int main(int argc, char** argv)
+{
+	srand(time(0));
+	while (1)
+	{
+		prime = rand() % (500 + 1 - 100) + 100;
+		if (isPrime(prime) == 1)
+			break;
+	}
+	while (1)
+	{
+		generator = rand() % (100 + 1 - 10) + 10;
+		if (isPrime(generator) == 1)
+			break;
+	}
+	printf("prime no:%d\n", prime);
+	printf("generator:%d\n", generator);
+	printf("Enter private key(prime number) for Alice:\n");
+	scanf_s("%ld", &a);
+	printf("Enter private key(prime number) for Bob:\n");
+	scanf_s("%ld", &b);
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowSize(1000, 700);
+	glutInitWindowPosition(0, 0);
+	glutCreateWindow("Diffie Hellman");
+	glMatrixMode(GL_MODELVIEW);//INIT
+	gluOrtho2D(0, 700, 0, 700);
+	glPointSize(10.0);
+	glutKeyboardFunc(keyfunc);//enabling keyboard
+	glutCreateMenu(scan_menu);//enabling mouse right button
+	glutAddMenuEntry("exchange keys", 1);
+	glutAddMenuEntry("shared secret", 2);
+	glutAddMenuEntry("Quit", 3);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+	glutDisplayFunc(display);
+	//display();
+	glutMainLoop();
+}
